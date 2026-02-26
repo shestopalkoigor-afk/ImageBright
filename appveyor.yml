@@ -1,0 +1,9 @@
+version: 2.x
+build_script:
+- echo Building project...
+install:
+- pip install -r requirements.txt
+test_script:
+- pytest app.py -v
+artifacts:
+- path: *.png
