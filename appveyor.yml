@@ -15,4 +15,4 @@ install:
 build: off
 
 test_script:
-  - "python -c \"import flask, PIL, matplotlib; print('Все библиотеки загружены успешно')\""
+  - "python -c \"import flask, PIL, matplotlib; print('Build environment is READY')\""
