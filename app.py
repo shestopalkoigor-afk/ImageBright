@@ -41,12 +41,17 @@ def index():
             enhancer = ImageEnhance.Brightness(img)
             res_img = enhancer.enhance(brightness)
             res_hist = get_histogram_url(res_img)
-            
+            orig_path = os.path.join(UPLOAD_FOLDER, 'original.png')
+            img.save(orig_path)
             save_path = os.path.join(UPLOAD_FOLDER, 'result.jpg')
             res_img.save(save_path)
             
-            return render_template('index.html', result_img=save_path, 
-                                   orig_hist=orig_hist, res_hist=res_hist)
+            return render_template('index.html', 
+                                   orig_img=orig_path,
+                                   result_img=save_path, 
+                                   orig_hist=orig_hist, 
+                                   res_hist=res_hist,
+                                   brightness=brightness)
     return render_template('index.html')
 
 if __name__ == '__main__':
