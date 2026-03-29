@@ -1,43 +1,20 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Редактор яркости</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-        .result-container { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
-        img { max-width: 100%; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; }
-        .chart { width: 45%; min-width: 300px; }
-        form { background: #f4f4f4; padding: 20px; border-radius: 10px; }
-    </style>
-</head>
-<body>
-    <h1>Изменение яркости изображения</h1>
-    
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <br><br>
-        <label>Уровень яркости (1.0 = оригинал): </label>
-        <input type="number" name="brightness" step="0.1" value="{{ brightness or 1.0 }}" style="width: 60px;">
-        <br><br>
-        <button type="submit">Обработать и показать графики</button>
-    </form>
-
     {% if result_img %}
         <hr>
-        <h2>Результат:</h2>
-        <img src="{{ result_img }}?{{ range(1, 9999) | random }}" alt="Результат">
-        
         <div class="result-container">
+            <!-- Блок ОРИГИНАЛА -->
             <div class="chart">
+                <h2>Оригинал</h2>
+                <img src="{{ orig_img }}?{{ range(1, 9999) | random }}" alt="Оригинал">
                 <h3>Гистограмма ДО</h3>
                 <img src="data:image/png;base64,{{ orig_hist }}" alt="График до">
             </div>
+
+            <!-- Блок РЕЗУЛЬТАТА -->
             <div class="chart">
+                <h2>Результат (Яркость: {{ brightness }})</h2>
+                <img src="{{ result_img }}?{{ range(1, 9999) | random }}" alt="Результат">
                 <h3>Гистограмма ПОСЛЕ</h3>
                 <img src="data:image/png;base64,{{ res_hist }}" alt="График после">
             </div>
         </div>
     {% endif %}
-</body>
-</html>
