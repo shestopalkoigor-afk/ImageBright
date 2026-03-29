@@ -1,6 +1,6 @@
 import os
-import matplotlib.pyplot as plt
-matplotlib.use('Agg')  # ОБЯЗАТЕЛЬНО: переключает matplotlib в режим генерации файлов без GUI
+import matplotlib
+matplotlib.use('Agg')  
 from flask import Flask, render_template, request, send_from_directory
 from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
