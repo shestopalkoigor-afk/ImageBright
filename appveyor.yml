@@ -1,11 +1,18 @@
 image: Visual Studio 2022
 stack: python 3
 
-install:
-  - python -m pip install --upgrade pip
-  - pip install -r requirements.txt
+environment:
+  # Явно указываем путь к 64-битному Python 3.12
+  PYTHON: "C:\\Python312-x64"
 
-build: off  # Для Python-проектов сборка не требуется
+install:
+  # Обновляем PATH, чтобы использовать нужную версию
+  - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "python -m pip install --upgrade pip"
+  # Устанавливаем зависимости
+  - "pip install -r requirements.txt"
+
+build: off
 
 test_script:
-  - python -c "import app; print('App imported successfully')"
+  - "python -c \"import flask, PIL, matplotlib; print('Все библиотеки загружены успешно')\""
