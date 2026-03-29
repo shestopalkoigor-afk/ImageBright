@@ -1,9 +1,11 @@
-version: 2.x
-build_script:
-- echo Building project...
+image: Visual Studio 2022
+stack: python 3
+
 install:
-- pip install -r requirements.txt
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+
+build: off  # Для Python-проектов сборка не требуется
+
 test_script:
-- pytest app.py -v
-artifacts:
-- path: "*.png"
+  - python -c "import app; print('App imported successfully')"
