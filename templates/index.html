@@ -2,44 +2,214 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактор яркости</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-        .result-container { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
-        img { max-width: 100%; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; }
-        .chart { width: 45%; min-width: 300px; }
-        form { background: #f4f4f4; padding: 20px; border-radius: 10px; }
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            max-width: 1240px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            text-align: center; 
+            color: var(--text-main);
+            background-color: var(--bg-color);
+        }
+
+        h1 { 
+            font-size: 1.8rem; 
+            margin: 10px 0 25px 0; 
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        /* Элегантная и компактная панель управления */
+        form { 
+            background: var(--card-bg); 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            border: 1px solid var(--border-color);
+        }
+        form p, form br { display: none; }
+        
+        label { 
+            font-size: 0.95rem; 
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Стилизация полей ввода */
+        input[type="file"] { 
+            font-size: 0.9rem; 
+            color: var(--text-muted);
+        }
+        input[type="number"] {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+        }
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Красивая кнопка */
+        button { 
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 18px; 
+            font-size: 0.95rem; 
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer; 
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover { 
+            background-color: var(--primary-hover); 
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error { 
+            color: #dc2626; 
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px; 
+            font-size: 0.95rem; 
+        }
+
+        /* Крупные современные блоки результатов */
+        .section-block { 
+            background: var(--card-bg);
+            margin-top: 25px; 
+            border-radius: 16px;
+            padding: 24px; 
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            border: 1px solid var(--border-color);
+        }
+        .section-title { 
+            font-size: 1.25rem; 
+            font-weight: 600;
+            margin: 0 0 20px 0; 
+            text-align: left;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+        }
+        
+        .row-container { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            gap: 24px; 
+        }
+        .media-box { 
+            flex: 1; 
+            width: 48%; 
+            text-align: center; 
+        }
+        .media-box h3 { 
+            margin: 0 0 12px 0; 
+            font-size: 0.95rem; 
+            font-weight: 600;
+            color: var(--text-muted); 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            transition: transform 0.2s;
+        }
+        img:hover {
+            transform: scale(1.01);
+        }
     </style>
 </head>
 <body>
     <h1>Изменение яркости изображения</h1>
     
-    <form method="POST" enctype="multipart/form-data">
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <form action="/process" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*" required>
-        <br><br>
-        <label>Уровень яркости (1.0 = оригинал): </label>
-        <input type="number" name="brightness" step="0.1" value="{{ brightness or 1.0 }}" style="width: 60px;">
-        <br><br>
-        <button type="submit">Обработать и показать графики</button>
+        
+        <label>
+            Яркость (от -100 до +100 %): 
+            <input type="number" name="brightness" min="-100" max="100" value="{{ brightness_level or 0 }}" style="width: 55px;">
+        </label>
+        
+        <label style="cursor: pointer;">
+            <input type="checkbox" name="add_timestamp"> Добавить дату и время
+        </label>
+        
+        <button type="submit">Обработать</button>
     </form>
 
-    {% if result_img %}
-        <hr>
-        <div class="result-container">
-            <!-- Блок ОРИГИНАЛА -->
-            <div class="chart">
-                <h2>Оригинал</h2>
-                <img src="{{ orig_img }}?{{ range(1, 9999) | random }}" alt="Оригинал">
-                <h3>Гистограмма ДО</h3>
-                <img src="data:image/png;base64,{{ orig_hist }}" alt="График до">
+    {% if res_img %}
+        <!-- БЛОК ОРИГИНАЛА -->
+        <div class="section-block">
+            <div class="section-title">Исходное изображение</div>
+            <div class="row-container">
+                <div class="media-box">
+                    <h3>Фото</h3>
+                    <img src="{{ original_image }}" alt="Оригинал">
+                </div>
+                <div class="media-box">
+                    <h3>Гистограмма</h3>
+                    <img src="{{ original_histogram }}" alt="График до">
+                </div>
             </div>
+        </div>
 
-            <!-- Блок РЕЗУЛЬТАТА -->
-            <div class="chart">
-                <h2>Результат (Яркость: {{ brightness }})</h2>
-                <img src="{{ result_img }}?{{ range(1, 9999) | random }}" alt="Результат">
-                <h3>Гистограмма ПОСЛЕ</h3>
-                <img src="data:image/png;base64,{{ res_hist }}" alt="График после">
+        <!-- БЛОК РЕЗУЛЬТАТА -->
+        <div class="section-block">
+            <div class="section-title">Результат обработки (Яркость: {{ brightness_level }}%)</div>
+            <div class="row-container">
+                <div class="media-box">
+                    <h3>Фото с изменениями</h3>
+                    <img src="{{ res_img }}" alt="Результат">
+                </div>
+                <div class="media-box">
+                    <h3>Гистограмма</h3>
+                    <img src="{{ processed_histogram }}" alt="График после">
+                </div>
             </div>
         </div>
     {% endif %}
